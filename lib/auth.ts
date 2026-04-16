@@ -30,6 +30,14 @@ function getCreditsForProduct(productId: string): number {
   return creditMap[productId] ?? 0;
 }
 
+// Debug: Check if required environment variables are set
+if (!process.env.BETTER_AUTH_SECRET) {
+  console.error("CRITICAL: BETTER_AUTH_SECRET is not set!");
+}
+if (!process.env.DATABASE_URL) {
+  console.error("CRITICAL: DATABASE_URL is not set!");
+}
+
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL ?? "https://clipa-tau.vercel.app",
   secret: process.env.BETTER_AUTH_SECRET,
