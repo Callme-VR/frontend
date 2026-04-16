@@ -58,7 +58,7 @@ export const auth = betterAuth({
           // Once you have confirmed your POLAR_ACCESS_TOKEN is valid in
           // Vercel → Settings → Environment Variables, you can safely
           // flip this back to `true`.
-          createCustomerOnSignUp: false,
+          createCustomerOnSignUp: true,
           use: [
             checkout({
               products: [
