@@ -31,7 +31,7 @@ function getCreditsForProduct(productId: string): number {
 }
 
 export const auth = betterAuth({
-  baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
+  baseURL: process.env.BETTER_AUTH_URL ?? "https://clipa-tau.vercel.app",
   secret: process.env.BETTER_AUTH_SECRET,
   database: prismaAdapter(prisma, {
     provider: "postgresql",
