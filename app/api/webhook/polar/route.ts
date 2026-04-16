@@ -5,9 +5,9 @@ import prisma from "@/lib/prisma";
 // Map Polar product IDs → credits to grant
 function getCreditsForProduct(productId: string): number {
   const creditMap: Record<string, number> = {
-    "5d518c29-8804-4bca-9b13-2a275c245c73": 50, // Small Pack  – 50 credits
-    "3deb32fd-578f-4cc3-8594-3850f92f61b8": 150, // Medium Pack – 150 credits
-    "37433757-1f3b-490c-afb9-32c12e2f86f4": 500, // Large Pack  – 500 credits
+    "48084992-90d5-404c-8a75-c7eb95178ad9": 50, // Small Pack  – 50 credits
+    "d13df262-9690-4da0-8c2b-e337ab7fd92e": 150, // Medium Pack – 150 credits
+    "91904a1e-a2a4-4287-b7ef-315faf8a902a": 500, // Large Pack  – 500 credits
   };
   return creditMap[productId] ?? 0;
 }

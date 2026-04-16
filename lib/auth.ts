@@ -23,9 +23,9 @@ const polarClient = new Polar({
 // Map Polar product IDs → credits to grant
 function getCreditsForProduct(productId: string): number {
   const creditMap: Record<string, number> = {
-    "5d518c29-8804-4bca-9b13-2a275c245c73": 50, // Small Pack  – 50 credits
-    "3deb32fd-578f-4cc3-8594-3850f92f61b8": 150, // Medium Pack – 150 credits
-    "37433757-1f3b-490c-afb9-32c12e2f86f4": 500, // Large Pack  – 500 credits
+    "48084992-90d5-404c-8a75-c7eb95178ad9": 50, // Small Pack  – 50 credits
+    "d13df262-9690-4da0-8c2b-e337ab7fd92e": 150, // Medium Pack – 150 credits
+    "91904a1e-a2a4-4287-b7ef-315faf8a902a": 500, // Large Pack  – 500 credits
   };
   return creditMap[productId] ?? 0;
 }
@@ -39,7 +39,7 @@ if (!process.env.DATABASE_URL) {
 }
 
 export const auth = betterAuth({
-  baseURL: process.env.BETTER_AUTH_URL ?? "https://clipa-tau.vercel.app",
+  baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
   secret: process.env.BETTER_AUTH_SECRET,
   database: prismaAdapter(prisma, {
     provider: "postgresql",
@@ -50,99 +50,99 @@ export const auth = betterAuth({
   plugins: [
     ...(polarAccessToken
       ? [
-          polar({
-            client: polarClient,
-            // Set to false so that an expired / invalid POLAR_ACCESS_TOKEN
-            // cannot block user sign-up.  Polar customers are created
-            // automatically at first checkout instead.
-            // Once you have confirmed your POLAR_ACCESS_TOKEN is valid in
-            // Vercel → Settings → Environment Variables, you can safely
-            // flip this back to `true`.
-            createCustomerOnSignUp: false,
-            use: [
-              checkout({
-                products: [
-                  {
-                    productId: "37433757-1f3b-490c-afb9-32c12e2f86f4", // Large plan
-                    slug: "large",
-                  },
-                  {
-                    productId: "3deb32fd-578f-4cc3-8594-3850f92f61b8", // Medium plan
-                    slug: "medium",
-                  },
-                  {
-                    productId: "5d518c29-8804-4bca-9b13-2a275c245c73", // Small plan
-                    slug: "small",
-                  },
-                ],
-                // Relative path – better-auth resolves it against BETTER_AUTH_URL
-                successUrl: "/success?checkout_id={CHECKOUT_ID}",
-                authenticatedUsersOnly: true,
-              }),
-              portal(),
-              webhooks({
-                secret: process.env.POLAR_WEBHOOK_SECRET as string,
-
-                // ✅ MAIN CREDIT-GRANTING HANDLER
-                onOrderPaid: async (payload) => {
-                  // payload.data is a fully SDK-parsed Order (camelCase fields)
-                  const order = payload.data;
-                  const userEmail = order.customer.email;
-                  // productId is a top-level camelCase field on Order (string | null)
-                  const productId = order.productId;
-
-                  console.log(
-                    `[Polar webhook] order.paid – id=${order.id} customer=${userEmail} productId=${productId}`,
-                  );
-
-                  if (!productId) {
-                    console.error(
-                      `[Polar webhook] No productId on order ${order.id} – skipping credit grant`,
-                    );
-                    return;
-                  }
-
-                  const creditsToAdd = getCreditsForProduct(productId);
-
-                  if (creditsToAdd === 0) {
-                    console.error(
-                      `[Polar webhook] Unknown productId "${productId}" on order ${order.id} – no credits added`,
-                    );
-                    return;
-                  }
-
-                  try {
-                    const updated = await prisma.user.update({
-                      where: { email: userEmail },
-                      data: { credits: { increment: creditsToAdd } },
-                      select: { credits: true },
-                    });
-                    console.log(
-                      `[Polar webhook] ✅ Added ${creditsToAdd} credits to ${userEmail}. New balance: ${updated.credits}`,
-                    );
-                  } catch (error) {
-                    console.error(
-                      `[Polar webhook] ❌ Failed to add credits to ${userEmail}:`,
-                      error,
-                    );
-                  }
+        polar({
+          client: polarClient,
+          // Set to false so that an expired / invalid POLAR_ACCESS_TOKEN
+          // cannot block user sign-up.  Polar customers are created
+          // automatically at first checkout instead.
+          // Once you have confirmed your POLAR_ACCESS_TOKEN is valid in
+          // Vercel → Settings → Environment Variables, you can safely
+          // flip this back to `true`.
+          createCustomerOnSignUp: false,
+          use: [
+            checkout({
+              products: [
+                {
+                  productId: "91904a1e-a2a4-4287-b7ef-315faf8a902a", // Large plan
+                  slug: "large",
                 },
-
-                onCustomerStateChanged: async (payload) => {
-                  console.log(
-                    `[Polar webhook] customer.state_changed – id=${payload.data.id}`,
-                  );
+                {
+                  productId: "d13df262-9690-4da0-8c2b-e337ab7fd92e", // Medium plan
+                  slug: "medium",
                 },
-
-                onPayload: async (payload) => {
-                  console.log(
-                    `[Polar webhook] received event: ${payload.type}`,
-                  );
+                {
+                  productId: "48084992-90d5-404c-8a75-c7eb95178ad9", // Small plan
+                  slug: "small",
                 },
-              }),
-            ],
-          }),
-        ]
+              ],
+              // Relative path – better-auth resolves it against BETTER_AUTH_URL
+              successUrl: "/success?checkout_id={CHECKOUT_ID}",
+              authenticatedUsersOnly: true,
+            }),
+            portal(),
+            webhooks({
+              secret: process.env.POLAR_WEBHOOK_SECRET as string,
+
+              // ✅ MAIN CREDIT-GRANTING HANDLER
+              onOrderPaid: async (payload) => {
+                // payload.data is a fully SDK-parsed Order (camelCase fields)
+                const order = payload.data;
+                const userEmail = order.customer.email;
+                // productId is a top-level camelCase field on Order (string | null)
+                const productId = order.productId;
+
+                console.log(
+                  `[Polar webhook] order.paid – id=${order.id} customer=${userEmail} productId=${productId}`,
+                );
+
+                if (!productId) {
+                  console.error(
+                    `[Polar webhook] No productId on order ${order.id} – skipping credit grant`,
+                  );
+                  return;
+                }
+
+                const creditsToAdd = getCreditsForProduct(productId);
+
+                if (creditsToAdd === 0) {
+                  console.error(
+                    `[Polar webhook] Unknown productId "${productId}" on order ${order.id} – no credits added`,
+                  );
+                  return;
+                }
+
+                try {
+                  const updated = await prisma.user.update({
+                    where: { email: userEmail },
+                    data: { credits: { increment: creditsToAdd } },
+                    select: { credits: true },
+                  });
+                  console.log(
+                    `[Polar webhook] ✅ Added ${creditsToAdd} credits to ${userEmail}. New balance: ${updated.credits}`,
+                  );
+                } catch (error) {
+                  console.error(
+                    `[Polar webhook] ❌ Failed to add credits to ${userEmail}:`,
+                    error,
+                  );
+                }
+              },
+
+              onCustomerStateChanged: async (payload) => {
+                console.log(
+                  `[Polar webhook] customer.state_changed – id=${payload.data.id}`,
+                );
+              },
+
+              onPayload: async (payload) => {
+                console.log(
+                  `[Polar webhook] received event: ${payload.type}`,
+                );
+              },
+            }),
+          ],
+        }),
+      ]
       : []),
   ],
 });
