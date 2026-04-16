@@ -52,7 +52,13 @@ export const auth = betterAuth({
       ? [
           polar({
             client: polarClient,
-            createCustomerOnSignUp: true,
+            // Set to false so that an expired / invalid POLAR_ACCESS_TOKEN
+            // cannot block user sign-up.  Polar customers are created
+            // automatically at first checkout instead.
+            // Once you have confirmed your POLAR_ACCESS_TOKEN is valid in
+            // Vercel → Settings → Environment Variables, you can safely
+            // flip this back to `true`.
+            createCustomerOnSignUp: false,
             use: [
               checkout({
                 products: [
