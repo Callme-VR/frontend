@@ -34,7 +34,7 @@ const plans: PricingPlan[] = [
     features: ["10 credits", "No expiration", "Download all clips"],
     buttonText: "Buy 10 credits",
     buttonVariant: "outline",
-    priceId: "5d518c29-8804-4bca-9b13-2a275c245c73",
+    priceId: "48084992-90d5-404c-8a75-c7eb95178ad9",
   },
   {
     title: "Medium Pack",
@@ -45,7 +45,7 @@ const plans: PricingPlan[] = [
     buttonVariant: "default",
     isPopular: true,
     savePercentage: "Save 17%",
-    priceId: "3deb32fd-578f-4cc3-8594-3850f92f61b8",
+    priceId: "d13df262-9690-4da0-8c2b-e337ab7fd92e",
   },
   {
     title: "Large Pack",
@@ -56,7 +56,7 @@ const plans: PricingPlan[] = [
     buttonVariant: "outline",
     isPopular: false,
     savePercentage: "Save 30%",
-    priceId: "37433757-1f3b-490c-afb9-32c12e2f86f4",
+    priceId: "91904a1e-a2a4-4287-b7ef-315faf8a902a",
   },
 ];
 
