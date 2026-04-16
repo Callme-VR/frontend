@@ -41,20 +41,19 @@ export function SignUpForm({
       setIsSubmitting(true);
       setError(null);
 
-      console.log("Submitting signup data:", data);
       const result = await signUp.email(data);
-      console.log("Signup result:", result);
 
       if (result.error) {
         console.error("Signup error:", result.error);
-        setError(result.error.message || "Sign up failed");
+        // More detailed error for debugging
+        const errorMessage = result.error.message || "Sign up failed";
+        setError(`${errorMessage}. Please check your connection and try again.`);
       } else {
-        console.log("Signup successful, redirecting...");
         router.push("/dashboard");
       }
     } catch (error) {
       console.error("Unexpected error during signup:", error);
-      setError("An unexpected error occurred. Please try again.");
+      setError("Network error. Please check your connection and try again.");
     } finally {
       setIsSubmitting(false);
     }
