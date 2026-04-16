@@ -47,14 +47,16 @@ export default async function DashboardPage() {
     },
   });
 
-  const formattedFiles = userData.uploadedFiles.map((file) => ({
-    id: file.id,
-    s3Key: file.s3Key,
-    filename: file.displayName ?? "Unknown filename",
-    status: file.status,
-    createdAt: file.createdAt,
-    clipCount: file._count.clips,
-  }));
+  const formattedFiles = userData.uploadedFiles.map(
+    (file: (typeof userData.uploadedFiles)[number]) => ({
+      id: file.id,
+      s3Key: file.s3Key,
+      filename: file.displayName ?? "Unknown filename",
+      status: file.status,
+      createdAt: file.createdAt,
+      clipCount: file._count.clips,
+    }),
+  );
 
   return (
     <DashBoardClient uploadedFiles={formattedFiles} clips={userData.clips} />
