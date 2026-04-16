@@ -12,6 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { useSession } from "@/lib/auth-client";
 
 interface PricingPlan {
   title: string;
@@ -28,43 +29,47 @@ interface PricingPlan {
 const plans: PricingPlan[] = [
   {
     title: "Small Pack",
-    price: "$9.99",
+    price: "$1.00",
     description: "Perfect for occasional podcast creators",
-    features: ["50 credits", "No expiration", "Download all clips"],
-    buttonText: "Buy 50 credits",
+    features: ["10 credits", "No expiration", "Download all clips"],
+    buttonText: "Buy 10 credits",
     buttonVariant: "outline",
-    priceId: "small",
+    priceId: "5d518c29-8804-4bca-9b13-2a275c245c73",
   },
   {
     title: "Medium Pack",
-    price: "$24.99",
+    price: "$5.00",
     description: "Best value for regular podcasters",
-    features: ["150 credits", "No expiration", "Download all clips"],
-    buttonText: "Buy 150 credits",
+    features: ["50 credits", "No expiration", "Download all clips"],
+    buttonText: "Buy 50 credits",
     buttonVariant: "default",
     isPopular: true,
     savePercentage: "Save 17%",
-    priceId: "medium",
+    priceId: "3deb32fd-578f-4cc3-8594-3850f92f61b8",
   },
   {
     title: "Large Pack",
-    price: "$69.99",
+    price: "$15.00",
     description: "Ideal for podcast studios and agencies",
-    features: ["500 credits", "No expiration", "Download all clips"],
-    buttonText: "Buy 500 credits",
+    features: ["100 credits", "No expiration", "Download all clips"],
+    buttonText: "Buy 100 credits",
     buttonVariant: "outline",
     isPopular: false,
     savePercentage: "Save 30%",
-    priceId: "large",
+    priceId: "37433757-1f3b-490c-afb9-32c12e2f86f4",
   },
 ];
 
 function PricingCard({ plan }: { plan: PricingPlan }) {
+  const { data: session } = useSession();
+  
   const handleCheckout = () => {
     const params = new URLSearchParams({ 
       products: plan.priceId,
-      customerEmail: '' // Add user email if available
     });
+    if (session?.user?.email) {
+      params.set("customerEmail", session.user.email);
+    }
     window.location.href = `/api/checkout?${params.toString()}`;
   };
 
@@ -77,30 +82,30 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
       )}
     >
       {plan.isPopular && (
-        <div className="bg-black text-white dark:bg-white dark:text-black absolute top-4 left-1/2 -translate-x-1/2 transform rounded-full px-4 py-1.5 text-xs font-medium tracking-wide whitespace-nowrap z-10 shadow-md">
+        <div className="bg-black text-white dark:bg-white dark:text-black absolute top-0 left-1/2 -translate-x-1/2 transform rounded-full px-4 py-1.5 text-xs font-medium tracking-wide whitespace-nowrap z-10 shadow-md">
           Most Popular
         </div>
       )}
-      <CardHeader className="flex-1 pb-4">
-        <CardTitle className="text-lg font-medium tracking-tight">{plan.title}</CardTitle>
-        <div className="mt-2">
-          <span className="text-3xl font-semibold tracking-tight">{plan.price}</span>
+      <CardHeader className="flex-1 pb-6">
+        <CardTitle className="text-xl font-medium tracking-tight">{plan.title}</CardTitle>
+        <div className="mt-3">
+          <span className="text-4xl font-semibold tracking-tight">{plan.price}</span>
         </div>
         {plan.savePercentage && (
-          <p className="text-sm font-medium text-green-600 dark:text-green-400 mt-1">
+          <p className="text-sm font-medium text-green-600 dark:text-green-400 mt-2">
             {plan.savePercentage}
           </p>
         )}
-        <CardDescription className="mt-3 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
+        <CardDescription className="mt-4 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
           {plan.description}
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-3 pb-4">
-        <ul className="text-zinc-600 dark:text-zinc-400 space-y-3 text-sm">
+      <CardContent className="space-y-4 pb-6">
+        <ul className="text-zinc-600 dark:text-zinc-400 space-y-4 text-sm">
           {plan.features.map((feature, index) => (
             <li key={index} className="flex items-start gap-3">
               <Check className={cn(
-                "size-4 mt-0.5 shrink-0",
+                "size-5 mt-0.5 shrink-0",
                 plan.isPopular 
                   ? "text-black dark:text-white" 
                   : "text-zinc-500 dark:text-zinc-400"
@@ -155,7 +160,7 @@ export default function BillingPage() {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 gap-6 mb-16 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-8 mb-16 lg:grid-cols-3 xl:gap-10">
           {plans.map((plan) => (
             <PricingCard key={plan.title} plan={plan} />
           ))}
