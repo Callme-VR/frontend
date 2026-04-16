@@ -12,6 +12,8 @@
     "migrate": "npx prisma migrate dev",
     "generate": "npx prisma generate",
     "see:db": "npx prisma studio",
+    "push":"npx prisma db push",
+    "reset":"npx prisma migrate reset",
     "lint": "eslint"
   },
   "dependencies": {
